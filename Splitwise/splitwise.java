@@ -53,4 +53,28 @@ class Splitwise {
         User user = users.get(userId);
         return user != null ? user.getBalances() : new HashMap<>();
     }
+
+    public void settleBalance(String userId1, String userId2) {
+        User user1 = users.get(userId1);
+        User user2 = users.get(userId2);
+        if (user1 != null && user2 != null) {
+            Double balance = user1.getBalances().get(user2);
+            if (balance != null) {
+                user1.getBalances().remove(user2);
+                user2.getBalances().remove(user1);
+            }
+        }
+    }
+     public List<Expense> getUserTransactionHistory(String userId) {
+        User user = users.get(userId);
+        if (user == null) return new ArrayList<>();
+        return allExpenses.stream()
+                .filter(expense -> expense.getParticipants().contains(user) || expense.getPaidBy().equals(user))
+                .toList();
+    }
+
+    public List<Expense> getGroupExpenses(String groupId) {
+        Group group = groups.get(groupId);
+        return group != null ? group.getExpenses() : new ArrayList<>();
+    }
 }
