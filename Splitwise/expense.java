@@ -1,21 +1,45 @@
 
-import java.util.Date;
 import java.util.List;
 
-class Expense {
+// Expense class to manage expense details
+abstract class Expense {
 
-    protected double totalAmount;
-    protected User paidBy;
-    protected List<ExpenseSplit> splits;
+    protected String expenseId;
     protected String description;
-    protected Date expenseDate;
+    protected double amount;
+    protected User paidBy;
+    protected List<User> participants;
+    protected SplitMethod splitMethod;
 
-    public Expense(double totalAmount,User paidBy,List<ExpenseSplit> splits,String description,Date expenseDate){
-        this.totalAmount=totalAmount;
-        this.paidBy=paidBy;
-        this.splits=splits;
-        this.description=description;
-        this.expenseDate=expenseDate;
+    public Expense(String expenseId, String description, double amount, User paidBy, List<User> participants, SplitMethod splitMethod) {
+        this.expenseId = expenseId;
+        this.description = description;
+        this.amount = amount;
+        this.paidBy = paidBy;
+        this.participants = participants;
+        this.splitMethod = splitMethod;
+
     }
 
+    public abstract void splitExpense();
+
+    public String getExpenseId() {
+        return expenseId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public User getPaidBy() {
+        return paidBy;
+    }
+
+    public List<User> getParticipants() {
+        return participants;
+    }
 }

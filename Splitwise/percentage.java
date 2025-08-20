@@ -1,17 +1,34 @@
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
-class PercentageExpense extends Expense{
-    public PercentageExpense(double totalAmount,User paidBy,Map<User,Double> userToPercent,String description,Date expenseDate){
-        super(totalAmount, paidBy, new ArrayList<>(), description, expenseDate);
+// Percentage split expense implementation
+class PercentageSplitExpense extends Expense {
 
-        for(Map.Entry<User,Double>entry: userToPercent.entrySet()){
-            splits.add(new ExpenseSplit(entry.getKey(),totalAmount*entry.getValue()/100));
+    private Map<User, Double> percentages;
+
+    public PercentageSplitExpense(String expenseId, String description, double amount, User paidBy, List<User> participants, Map<User, Double> percentages) {
+        super(expenseId, description, amount, paidBy, participants, SplitMethod.PERCENTAGE);
+        this.percentages = percentages;
+        validatePercentages();
+    }
+
+    private void validatePercentages() {
+        double totalPercentage = percentages.values().stream().mapToDouble(Double::doubleValue).sum();
+        if (Math.abs(totalPercentage - 100.0) > 0.01) {
+            throw new IllegalArgumentException("Percentages must sum to 100");
+
         }
+    }
 
-        double totalPercent=userToPercent.values().stream().mapToDouble(Double::doubleValue).sum();
-        if(totalPercent!=100) throw new IllegalArgumentException("Total percent Must be 100");
+    @Override
+    public void splitExpense() {
+        for (User participant : participants) {
+            if (!participant.equals(paidBy)) {
+                double participantShare = amount * (percentages.get(participant) / 100);
+                participant.updateBalance(paidBy, participantShare);
+                paidBy.updateBalance(participant, -participantShare);
+            }
+        }
     }
 }

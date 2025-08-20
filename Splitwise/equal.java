@@ -1,17 +1,22 @@
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-class EqualExpense extends Expense {
+// Equal split expense implementation
+class EqualSplitExpense extends Expense {
 
-    public EqualExpense(double totalAmount, User paidBy, List<User> involvedUsers, String description, Date expenseDate) {
-        super(totalAmount, paidBy, new ArrayList<>(), description, expenseDate);
+    public EqualSplitExpense(String expenseId, String description, double amount, User paidBy, List<User> participants) {
+        super(expenseId, description, amount, paidBy, participants, SplitMethod.EQUAL);
+    }
 
-        double share = totalAmount / involvedUsers.size();
-        for (User user : involvedUsers) {
-            splits.add(new ExpenseSplit(user, share));
-
+    @Override
+    public void splitExpense() {
+        double splitAmount = amount / participants.size();
+        for (User participant : participants) {
+            if (!participant.equals(paidBy)) {
+                participant.updateBalance(paidBy, splitAmount);
+                paidBy.updateBalance(participant, -splitAmount);
+            }
         }
     }
+
 }
